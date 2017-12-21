@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableData implements java.io.Serializable {
+	private static final long serialVersionUID = 1152809874465238337L;
+	
 	private List<RowData> data;
 	
 	public TableData() {

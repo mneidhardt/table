@@ -2,8 +2,6 @@ package dk.meem.swing;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.google.gson.Gson;
-
 public class PasswordTableModel extends AbstractTableModel {
 	private TableData data = new TableData();
 
@@ -47,9 +45,12 @@ public class PasswordTableModel extends AbstractTableModel {
 		}
 	}
 	
-	public String getData() {
-		return data.toString();
-		//return "no json today";
+	public TableData getTableData() {
+		return data;
 	}
-
+	
+	public void setTableData(Object data) {
+		this.data = (TableData)data;
+		this.fireTableRowsInserted(this.data.getRowCount()-1, this.data.getRowCount()-1);
+	}
 }
