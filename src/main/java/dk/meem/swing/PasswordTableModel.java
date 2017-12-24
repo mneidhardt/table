@@ -51,6 +51,9 @@ public class PasswordTableModel extends AbstractTableModel {
 	
 	public void setTableData(Object data) {
 		this.data = (TableData)data;
-		this.fireTableRowsInserted(this.data.getRowCount()-1, this.data.getRowCount()-1);
+		
+		for (int i=0; i<this.data.getRowCount(); i++) {
+			this.fireTableRowsInserted(i, i);
+		}
 	}
 }

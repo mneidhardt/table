@@ -41,11 +41,13 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -85,14 +87,15 @@ public class PasswordManager extends JPanel implements ActionListener {
 	private JTable table;
 	private JFileChooser fc;
 	private PasswordTableModel tablemodel;
-	private final static String serialisedFilename = "serialised.bin";
+
+	private String filename = null;
 	private final char[] password = "MegetHemmeligtKodeord".toCharArray();  // Should come from user input.
 
 	private int selectedRowid = -1;
 	
     public PasswordManager() {
         super(new GridLayout(1,0));
-        
+                
         tablemodel = new PasswordTableModel();
         table = new JTable(tablemodel);
         table.setPreferredScrollableViewportSize(new Dimension(500, 200));
@@ -139,6 +142,22 @@ public class PasswordManager extends JPanel implements ActionListener {
         });
         */
     }
+
+    public static char[] getPassword() {
+        JPanel panel = new JPanel();
+        final JPasswordField passwordField = new JPasswordField(20);
+        panel.add(new JLabel("Password"));
+        panel.add(passwordField);
+        JOptionPane pane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
+            @Override
+            public void selectInitialValue() {
+                passwordField.requestFocusInWindow();
+            }
+        };
+        pane.createDialog(null, "Password").setVisible(true);
+        //return passwordField.getPassword().length == 0 ? null : new String(passwordField.getPassword());
+        return passwordField.getPassword();
+    }
     
     public JMenuBar getMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -149,60 +168,10 @@ public class PasswordManager extends JPanel implements ActionListener {
 		//menu.getAccessibleContext().setAccessibleDescription("The only menu in this program that has menu items");
 		
 		menu.add(this.addItem(KeyEvent.VK_S, Constants.SAVEDATA));
-		menu.add(this.addItem(KeyEvent.VK_A, Constants.SAVEDATAAS));
+		menu.add(this.addItem(KeyEvent.VK_K, Constants.SAVEDATAAS));
 		menu.add(this.addItem(KeyEvent.VK_O, Constants.OPENDATA));
 		menu.add(this.addItem(KeyEvent.VK_N, Constants.NEWROW));
 		menu.add(this.addItem(KeyEvent.VK_D, Constants.DELETEROW));
-		/*
-		//a group of JMenuItems
-		JMenuItem menuItem1 = new JMenuItem(Constants.SAVEDATA, KeyEvent.VK_S);
-		menuItem1.setMnemonic(KeyEvent.VK_S);
-		//menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-		KeyStroke strokeSave = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		strokeSave = KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK);
-		menuItem1.setAccelerator(strokeSave);
-		menuItem1.getAccessibleContext().setAccessibleDescription("Save current data");
-		menuItem1.addActionListener(this);
-		menu.add(menuItem1);		
-
-		JMenuItem menuItem4 = new JMenuItem(Constants.SAVEDATAAS, KeyEvent.VK_A);
-		menuItem4.setMnemonic(KeyEvent.VK_A);
-		KeyStroke strokeSaveAs = KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		strokeSave = KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK);
-		menuItem4.setAccelerator(strokeSaveAs);
-		menuItem4.getAccessibleContext().setAccessibleDescription("Save current data as");
-		menuItem4.addActionListener(this);
-		menu.add(menuItem4);		
-
-		//a group of JMenuItems		
-		JMenuItem menuItem0 = new JMenuItem(Constants.OPENDATA, KeyEvent.VK_O);
-		menuItem0.setMnemonic(KeyEvent.VK_O);
-		//menuItem0.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-		KeyStroke strokeRestore = KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		strokeRestore = KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK);
-		menuItem0.setAccelerator(strokeRestore);
-		menuItem0.getAccessibleContext().setAccessibleDescription("Open password file");
-		menuItem0.addActionListener(this);
-		menu.add(menuItem0);		
-
-		JMenuItem menuItem2 = new JMenuItem(Constants.NEWROW, KeyEvent.VK_N);
-		menuItem2.setMnemonic(KeyEvent.VK_N);
-		KeyStroke strokeNewRow = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		strokeNewRow = KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK);
-		menuItem2.setAccelerator(strokeNewRow);
-		menuItem2.getAccessibleContext().setAccessibleDescription("Add new row");
-		menuItem2.addActionListener(this);
-		menu.add(menuItem2);
-
-		JMenuItem menuItem3 = new JMenuItem(Constants.DELETEROW, KeyEvent.VK_D);
-		menuItem3.setMnemonic(KeyEvent.VK_D);
-		KeyStroke strokeDeleteRow = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		strokeDeleteRow = KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK);
-		menuItem3.setAccelerator(strokeDeleteRow);
-		menuItem3.getAccessibleContext().setAccessibleDescription("Delete row");
-		menuItem3.addActionListener(this);
-		menu.add(menuItem3);
-		*/
 		
 		menuBar.add(menu);
 
@@ -225,12 +194,32 @@ public class PasswordManager extends JPanel implements ActionListener {
 			tablemodel.add();
 		} else if (e.getActionCommand().equals(Constants.SAVEDATA)) {
 			try {
-				this.storeData(serialisedFilename);
+				if (filename != null) {
+					this.storeData(filename);
+				} else {
+					JOptionPane.showMessageDialog(null, "File needs a name, use save as...");
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		} else if (e.getActionCommand().equals(Constants.SAVEDATAAS)) {
-			System.out.println("Save as comes here.....");
+			try {
+				//FileFilter filter = new FileNameExtensionFilter(".bin", "bin");
+				fc = new JFileChooser();
+				// fc.addChoosableFileFilter(filter);
+				int reply = fc.showSaveDialog(this);
+
+				if (reply == JFileChooser.APPROVE_OPTION) {
+					if (fc.getSelectedFile().isFile()) {
+						JOptionPane.showMessageDialog(null, "File already exists.");
+					} else {
+						filename = fc.getSelectedFile().getAbsolutePath();
+						this.storeData(filename);
+					}
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, "Failure when opening chosen file: " + e1.getMessage());
+			}
 		} else if (e.getActionCommand().equals(Constants.OPENDATA)) {
 			File file = null;
 			try {
