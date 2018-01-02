@@ -39,7 +39,7 @@ public class PasswordTableModel extends AbstractTableModel {
 	}
 
 	public void setValueAt(Object value, int row, int col) {
-		if (row > -1) {
+		if (row > -1 && row < this.getRowCount()) {
 			data.setValueAt(value, row, col);
 			fireTableCellUpdated(row, col);
 		}
@@ -50,10 +50,14 @@ public class PasswordTableModel extends AbstractTableModel {
 	}
 	
 	public void setTableData(Object data) {
-		this.data = (TableData)data;
-		
-		for (int i=0; i<this.data.getRowCount(); i++) {
-			this.fireTableRowsInserted(i, i);
+		if (this.data.getRowCount() > 0) {
+			this.fireTableRowsDeleted(0, this.data.getRowCount()-1);
 		}
+		this.data = (TableData)data;
+		this.fireTableRowsInserted(0, this.data.getRowCount()-1);
+		
+		//for (int i=0; i<this.data.getRowCount(); i++) {
+		//	this.fireTableRowsInserted(i, i);
+		//}
 	}
 }

@@ -7,4 +7,5 @@ public class Constants {
 	public final static String NEWROW = "New row";
 	public final static String DELETEROW = "Delete row";
 	public final static String CHOOSEROW = "Please choose a row";
+	public final static String FILEEXISTSOVERWRITE = "File exists, overwrite it?";
 }

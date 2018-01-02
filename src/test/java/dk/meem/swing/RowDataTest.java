@@ -18,9 +18,14 @@ public class RowDataTest {
 
 		assert(row.maxSize() > 0);
 		
+		try {
 		for (int i=0; i<row.maxSize(); i++) {
 			row.setValue(i, "Text" + i);
 			assertEquals(row.getColumn(i), "Text" + i);
+			assert(row.getColumnName(i) instanceof String);
+		}
+		} catch (Exception e) {
+			fail("Exception thrown during test: " + e.getMessage());
 		}
 	}
 	

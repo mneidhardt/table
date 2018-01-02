@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RowData implements java.io.Serializable {
+	private static final long serialVersionUID = 1973625176498757216L;
 	private static final String[] names = { "Name", "URL", "UserID", "Password" };
 	private List<String> rowdata;
 	
