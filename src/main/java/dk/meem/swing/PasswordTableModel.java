@@ -3,14 +3,29 @@ package dk.meem.swing;
 import javax.swing.table.AbstractTableModel;
 
 public class PasswordTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 2101063883865472832L;
 	private TableData data = new TableData();
 
 	public PasswordTableModel() {
 	}
 
 	public void add() {
-		data.addRow();
+		this.add(new RowData());
+	}
+
+	public void add(RowData newrow) {
+		data.addRow(newrow);
 		this.fireTableRowsInserted(data.getRowCount() - 1, data.getRowCount() - 1);
+	}
+
+	public RowData getRow(int rowid) {
+		return data.getRow(rowid);
+	}
+
+	public void setRow(int rowid, RowData row) {
+		for (int colid=0; colid<row.maxSize(); colid++) {
+			this.setValueAt(row.getColumn(colid), rowid, colid);
+		}
 	}
 
 	public void remove(int row) {
@@ -22,6 +37,7 @@ public class PasswordTableModel extends AbstractTableModel {
 		return data.getColumnCount();
 	}
 
+	@Override
 	public String getColumnName(int col) {
 		return data.getColumnName(col);
 	}
@@ -35,11 +51,11 @@ public class PasswordTableModel extends AbstractTableModel {
 	}
 
 	public boolean isCellEditable(int row, int col) {
-		return true;
+		return false;
 	}
 
 	public void setValueAt(Object value, int row, int col) {
-		if (row > -1 && row < this.getRowCount()) {
+		if (row > -1) {
 			data.setValueAt(value, row, col);
 			fireTableCellUpdated(row, col);
 		}
@@ -50,14 +66,10 @@ public class PasswordTableModel extends AbstractTableModel {
 	}
 	
 	public void setTableData(Object data) {
-		if (this.data.getRowCount() > 0) {
-			this.fireTableRowsDeleted(0, this.data.getRowCount()-1);
-		}
 		this.data = (TableData)data;
-		this.fireTableRowsInserted(0, this.data.getRowCount()-1);
 		
-		//for (int i=0; i<this.data.getRowCount(); i++) {
-		//	this.fireTableRowsInserted(i, i);
-		//}
+		for (int i=0; i<this.data.getRowCount(); i++) {
+			this.fireTableRowsInserted(i,i);
+		}
 	}
 }

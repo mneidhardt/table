@@ -12,19 +12,23 @@ public class TableData implements java.io.Serializable {
 		data = new ArrayList<RowData>();
 	}
 	
-	public void addRow() {
-		data.add(new RowData());
+	public void addRow(RowData newrow) {
+		data.add(newrow);
 	}
 	
 	public void removeRow(int rowidx) {
 		data.remove(rowidx);
 	}
-	
+
+	public RowData getRow(int rowidx) {
+		return data.get(rowidx);
+	}
+
 	public int getColumnCount() {
 		return RowData.getNames().length;
 	}
 	
-	public static String getColumnName(int colidx) {
+	public String getColumnName(int colidx) {
 		return RowData.getNames()[colidx];
 	}
 
@@ -51,4 +55,31 @@ public class TableData implements java.io.Serializable {
 		
 		return out;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TableData other = (TableData) obj;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		return true;
+	}
+
+	
 }

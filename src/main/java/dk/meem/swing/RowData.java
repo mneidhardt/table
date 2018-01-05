@@ -49,4 +49,30 @@ public class RowData implements java.io.Serializable {
 	public String toString() {
 		return String.join(",", rowdata);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((rowdata == null) ? 0 : rowdata.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RowData other = (RowData) obj;
+		if (rowdata == null) {
+			if (other.rowdata != null)
+				return false;
+		} else if (!rowdata.equals(other.rowdata))
+			return false;
+		return true;
+	}
+	
 }

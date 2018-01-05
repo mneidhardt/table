@@ -9,7 +9,7 @@ public class TableDataTest {
 	public void test() {
 		TableData td = new TableData();
 		assertEquals(td.getRowCount(), 0);
-		td.addRow();
+		td.addRow(new RowData());
 		assertEquals(td.getRowCount(), 1);
 		
 		assertEquals(td.getColumnCount(), RowData.getNames().length);
@@ -19,8 +19,13 @@ public class TableDataTest {
 		td.setValueAt("String3", 0, 2);
 		td.setValueAt("String4", 0, 3);
 		
-		System.out.println(td.toString());
+		assertEquals(td.getValueAt(0, 0), "String1");
 		
-	}
+		td.addRow(new RowData());
+		assertEquals(td.getRowCount(), 2);
 
+		td.removeRow(1);
+		assertEquals(td.getRowCount(), 1);
+		assertEquals(td.getValueAt(0, 0), "String1");
+	}
 }
