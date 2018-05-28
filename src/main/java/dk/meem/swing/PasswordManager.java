@@ -108,6 +108,22 @@ public class PasswordManager extends JPanel implements ActionListener {
         });
         */
     }
+
+    public static char[] getPassword() {
+        JPanel panel = new JPanel();
+        final JPasswordField passwordField = new JPasswordField(20);
+        panel.add(new JLabel("Password"));
+        panel.add(passwordField);
+        JOptionPane pane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
+            @Override
+            public void selectInitialValue() {
+                passwordField.requestFocusInWindow();
+            }
+        };
+        pane.createDialog(null, "Password").setVisible(true);
+        //return passwordField.getPassword().length == 0 ? null : new String(passwordField.getPassword());
+        return passwordField.getPassword();
+    }
     
     public JMenuBar getMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
