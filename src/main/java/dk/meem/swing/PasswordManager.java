@@ -148,8 +148,8 @@ public class PasswordManager extends JPanel implements ActionListener {
     private JMenuItem addItem(int keyevent, String text) {
 		JMenuItem item = new JMenuItem(text, keyevent);
 		item.setMnemonic(keyevent);
-		//item.setAccelerator(KeyStroke.getKeyStroke(keyevent, ActionEvent.ALT_MASK));
-		item.setAccelerator(KeyStroke.getKeyStroke(keyevent, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		item.setAccelerator(KeyStroke.getKeyStroke(keyevent, ActionEvent.ALT_MASK));
+		//item.setAccelerator(KeyStroke.getKeyStroke(keyevent, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		item.addActionListener(this);
 		return item;		
     }
