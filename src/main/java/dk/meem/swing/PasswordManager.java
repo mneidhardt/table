@@ -24,7 +24,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,7 +39,7 @@ public class PasswordManager extends JPanel implements ActionListener {
 	private JFileChooser fc;
 	private PasswordTableModel tablemodel;
 	private String serialisedfilename = null;
-	private final char[] password = "MegetHemmeligtKodeord".toCharArray();  // Should come from user input.
+	private char[] filepassword = null;
 	private Serialiser serialiser = new Serialiser();
 	private JFrame frame;
 	private int selectedRowid = -1;
@@ -165,7 +164,7 @@ public class PasswordManager extends JPanel implements ActionListener {
 			doEdit(selectedRowid);
 		} else if (e.getActionCommand().equals(Constants.SAVEDATA) && serialisedfilename != null) {
 			try {
-				serialiser.storeData(password, serialisedfilename, tablemodel.getTableData());
+				serialiser.storeData(filepassword, serialisedfilename, tablemodel.getTableData());
 			} catch (Exception e0) {
 				JOptionPane.showMessageDialog(null, Constants.ERRORSAVING + e0.getMessage());
 				System.err.println("Exception: " + e0.getMessage());
@@ -182,7 +181,7 @@ public class PasswordManager extends JPanel implements ActionListener {
 				
 				if (overwrite ==  JOptionPane.YES_OPTION || ! Files.exists(Paths.get(fc.getSelectedFile().getAbsolutePath()))) {
 					try {
-						serialiser.storeData(password, fc.getSelectedFile().getAbsolutePath(), tablemodel.getTableData());
+						serialiser.storeData(filepassword, fc.getSelectedFile().getAbsolutePath(), tablemodel.getTableData());
 						serialisedfilename = fc.getSelectedFile().getAbsolutePath();
 					} catch (Exception e0) {
 						JOptionPane.showMessageDialog(null, Constants.ERRORSAVINGAS + e0.getMessage());
@@ -201,7 +200,7 @@ public class PasswordManager extends JPanel implements ActionListener {
 				if (reply2 == JFileChooser.APPROVE_OPTION) {
 					file = fc.getSelectedFile();
 					this.serialisedfilename = file.getAbsolutePath(); 
-					TableData tmp = serialiser.restoreData(password, serialisedfilename);
+					TableData tmp = serialiser.restoreData(this.getPassword(), serialisedfilename);
 					tablemodel.setTableData(tmp);
 				}
 			} catch (Exception e1) {
